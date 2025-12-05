@@ -87,18 +87,12 @@
     .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.0),rgba(0,0,0,0.45));display:flex;align-items:flex-end;padding:14px;color:#fff}
     .overlay .title{font-weight:700;font-size:1rem;text-shadow:0 4px 12px rgba(0,0,0,0.45)}
 
-   <!-- COUNTERS / ABOUT -->
-  <section class="wrap" id="about">
-    <h2 class="section-title">Our Impact</h2>
-    <p class="lead-muted">Numbers that show our experience and coverage.</p>
-    <div class="counters">
-      <div class="counter-card"><div class="counter-value" data-target="150">0</div><div class="counter-label">Projects Completed</div></div>
-      <div class="counter-card"><div class="counter-value" data-target="120">0</div><div class="counter-label">Clients Served</div></div>
-      <div class="counter-card"><div class="counter-value" data-target="25">0</div><div class="counter-label">Team Members</div></div>
-      <div class="counter-card"><div class="counter-value" data-target="5">0</div><div class="counter-label">Years Experience</div></div>
-    </div>
-  </section>
-    
+    /* COUNTERS */
+    .counters{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px}
+    .counter-card{flex:1;background:linear-gradient(180deg,#001f3b 0%, #003b80 100%);color:#fff;padding:18px;border-radius:12px;text-align:center;min-width:140px;box-shadow:0 10px 25px rgba(0,0,0,0.18)}
+    .counter-value{font-size:2rem;font-weight:800;color:var(--accent);text-shadow:0 6px 16px rgba(0,212,255,0.12)}
+    .counter-label{margin-top:6px;font-weight:600}
+
     /* CONTACT */
     .contact-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:16px}
     .contact-card{background:#fff;padding:16px;border-radius:12px;box-shadow:var(--card-shadow)}
@@ -217,6 +211,34 @@
   <section class="wrap" id="about">
     <h2 class="section-title">About Us</h2>
     <p class="lead-muted">Spatial Point is a trusted Kenyan surveying company delivering precise land surveys, 3D mapping, cadastral, and GIS solutions. We serve developers, government bodies, and private landowners, ensuring every project is accurate and compliant with local regulations.</p>
+  
+  <!-- COUNTERS SECTION (PLACED HERE) -->
+   <section class="wrap" id="impact">
+  <h2 class="section-title">Our Impact</h2>
+  <p class="lead-muted">
+    Numbers that show our experience, growth and footprint across Kenya.
+  </p>
+  <div class="counters">
+    <div class="counter-card">
+      <div class="counter-value" data-target="150">0</div>
+      <div class="counter-label">Completed Projects</div>
+    </div>
+
+    <div class="counter-card">
+      <div class="counter-value" data-target="120">0</div>
+      <div class="counter-label">Happy Clients</div>
+    </div>
+
+    <div class="counter-card">
+      <div class="counter-value" data-target="8">0</div>
+      <div class="counter-label">Years Experience</div>
+    </div>
+
+    <div class="counter-card">
+      <div class="counter-value" data-target="12">0</div>
+      <div class="counter-label">Counties Covered</div>
+    </div>
+  </div>
   </section>
 
   <!-- CONTACT -->
@@ -262,24 +284,6 @@
 
   <!-- SCRIPT -->
   <script>
-
-     // Counter Animation
-    const counters = document.querySelectorAll('.counter-value');
-    counters.forEach(counter => {
-      const updateCount = () => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const increment = target / 100;
-        if(count < target){
-          counter.innerText = Math.ceil(count + increment);
-          setTimeout(updateCount, 20);
-        }else{
-          counter.innerText = target;
-        }
-      };
-      updateCount();
-    });
-    
     // Smooth scrolling & active menu
     document.querySelectorAll('nav a').forEach(link=>{
       link.addEventListener('click',e=>{
@@ -314,8 +318,56 @@
       proj.addEventListener('click',()=>{lightboxImg.src=proj.dataset.full; lightbox.classList.add('show');});
     });
     lightbox.addEventListener('click',()=>{lightbox.classList.remove('show');});
+
+    
   </script>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const counters = document.querySelectorAll('.counter-value');
+  const countersSection = document.querySelector('.counters');
+  const speed = 120;
+
+  if (!counters.length || !countersSection) {
+    // Nothing to do
+    return;
+  }
+
+  const animateCounters = () => {
+    counters.forEach(counter => {
+      const update = () => {
+        const target = +counter.getAttribute('data-target');
+        const value = +counter.innerText;
+        const increment = Math.max(1, Math.ceil(target / speed)); // ensure at least 1
+
+        if (value < target) {
+          counter.innerText = Math.min(target, Math.ceil(value + increment));
+          setTimeout(update, 15);
+        } else {
+          counter.innerText = target;
+        }
+      };
+      update();
+    });
+  };
+
+  // If IntersectionObserver is supported, trigger when counters section enters viewport
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      if (entries[0] && entries[0].isIntersecting) {
+        animateCounters();
+        obs.disconnect();
+      }
+    }, { threshold: 0.4 });
+
+    observer.observe(countersSection);
+  } else {
+    // Fallback for older browsers: just animate immediately
+    animateCounters();
+  }
+});
+</script>
+
 
 </body>
 </html>
-
